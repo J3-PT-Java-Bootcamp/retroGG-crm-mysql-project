@@ -4,10 +4,6 @@ import com.example.crmmysqlproject.crm.application.Opportunity.FindOpportunity.F
 import com.example.crmmysqlproject.crm.application.Shared.UUIDRequest;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
-import crm.application.Opportunity.FindOpportunity.FindOpportunity;
-import crm.application.Shared.UUIDRequest;
-import crm.domain.Opportunity.OpportunityNotFoundException;
-import crm.domain.Opportunity.OpportunityRepository;
 
 public final class CloseLostOpportunity {
 

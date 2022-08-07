@@ -2,8 +2,6 @@ package com.example.crmmysqlproject.crm.infrastructure.persistence.Account;
 
 import com.example.crmmysqlproject.crm.domain.Account.Account;
 import com.example.crmmysqlproject.crm.domain.Account.AccountRepository;
-import crm.domain.Account.Account;
-import crm.domain.Account.AccountRepository;
 
 import java.util.HashMap;
 import java.util.Map;

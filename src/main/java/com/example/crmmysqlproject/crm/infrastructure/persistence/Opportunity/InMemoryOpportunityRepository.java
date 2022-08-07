@@ -2,8 +2,6 @@ package com.example.crmmysqlproject.crm.infrastructure.persistence.Opportunity;
 
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
-import crm.domain.Opportunity.Opportunity;
-import crm.domain.Opportunity.OpportunityRepository;
 
 import java.util.HashMap;
 import java.util.Map;

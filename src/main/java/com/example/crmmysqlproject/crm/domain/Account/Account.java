@@ -2,8 +2,6 @@ package com.example.crmmysqlproject.crm.domain.Account;
 
 import com.example.crmmysqlproject.crm.domain.Opportunity.Contact;
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
-import crm.domain.Opportunity.Contact;
-import crm.domain.Opportunity.Opportunity;
 
 import java.util.ArrayList;
 import java.util.UUID;

@@ -6,12 +6,6 @@ import com.example.crmmysqlproject.crm.domain.Lead.LeadNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadRepository;
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
-import crm.domain.Account.Account;
-import crm.domain.Account.AccountRepository;
-import crm.domain.Lead.LeadNotFoundException;
-import crm.domain.Lead.LeadRepository;
-import crm.domain.Opportunity.Opportunity;
-import crm.domain.Opportunity.OpportunityRepository;
 
 public final class ConvertLeadToOpportunityUseCase {
 

@@ -1,7 +1,6 @@
 package com.example.crmmysqlproject.crm.domain.Opportunity;
 
 import com.example.crmmysqlproject.crm.domain.Lead.Lead;
-import crm.domain.Lead.Lead;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

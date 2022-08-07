@@ -2,8 +2,6 @@ package com.example.crmmysqlproject.crm.application.Leads.CreateLead;
 
 import com.example.crmmysqlproject.crm.domain.Lead.Lead;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadRepository;
-import crm.domain.Lead.Lead;
-import crm.domain.Lead.LeadRepository;
 
 public final class CreateLeadUseCase {
 
