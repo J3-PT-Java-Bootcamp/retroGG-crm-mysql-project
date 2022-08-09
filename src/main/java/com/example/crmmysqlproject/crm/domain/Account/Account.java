@@ -2,11 +2,25 @@ package com.example.crmmysqlproject.crm.domain.Account;
 
 import com.example.crmmysqlproject.crm.domain.Opportunity.Contact;
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.UUID;
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
 
 public class Account {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
     private String name;
     private Industry industry;
@@ -15,9 +29,6 @@ public class Account {
     private String country;
     private ArrayList<Contact> contacts;
     private ArrayList<Opportunity> opportunities;
-
-    private Account() {
-    }
 
     private Account(UUID id, String name, Industry industry, int employeeCount, String city, String country, ArrayList<Contact> contacts, ArrayList<Opportunity> oportunities) {
         this.id = id;
