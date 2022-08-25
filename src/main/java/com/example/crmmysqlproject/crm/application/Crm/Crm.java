@@ -19,6 +19,7 @@ import com.example.crmmysqlproject.crm.domain.Lead.LeadNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductType;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductTypeNotFoundException;
+import com.example.crmmysqlproject.crm.domain.Sales.SalesRepNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -141,9 +142,16 @@ public final class Crm {
 
         System.out.println("Company: ");
         String company = scanner.nextLine();
-        var request = new CreateLeadRequest(name, phone, email, company);
-        this.createLeadUseCase.run(request);
-        System.out.println("Lead created successfully!");
+
+        System.out.println("SalesRep ID: ");
+        Integer salesRepId = scanner.nextInt();
+        var request = new CreateLeadRequest(name, phone, email, company, salesRepId);
+        try {
+            this.createLeadUseCase.run(request);
+            System.out.println("Lead created successfully!");
+        } catch (SalesRepNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void convertLeadToOpportunity() {
