@@ -10,6 +10,7 @@ import com.example.crmmysqlproject.crm.application.Opportunity.CloseWonOpportuni
 import com.example.crmmysqlproject.crm.application.Opportunity.FindOpportunity.FindOpportunity;
 import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRep;
 import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRepRequest;
+import com.example.crmmysqlproject.crm.application.SalesRep.FindAll.FindAllSalesRep;
 import com.example.crmmysqlproject.crm.application.Shared.UUIDRequest;
 import com.example.crmmysqlproject.crm.domain.Account.Industry;
 import com.example.crmmysqlproject.crm.domain.Account.IndustryNotFoundException;
@@ -48,6 +49,9 @@ public final class Crm {
     @Autowired
     private CreateSalesRep createSalesRep;
 
+    @Autowired
+    private FindAllSalesRep findAllSalesRep;
+
     public void start() {
         this.printWelcome();
         String inputCommand;
@@ -74,6 +78,11 @@ public final class Crm {
     }
 
     private void showSalesReps() {
+        var salesRep = this.findAllSalesRep.run();
+        System.out.println("""
+                Listing sales reps
+                """);
+        System.out.println(salesRep);
     }
 
     private void createSalesRep() {
