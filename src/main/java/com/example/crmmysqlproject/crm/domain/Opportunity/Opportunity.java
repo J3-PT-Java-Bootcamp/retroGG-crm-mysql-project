@@ -40,17 +40,18 @@ public class Opportunity {
         this.salesRep = salesRep;
     }
 
-    private Opportunity(UUID id, Contact decisionMaker, int quantity, ProductType productType, OpportunityStatus status) {
+    private Opportunity(UUID id, Contact decisionMaker, int quantity, ProductType productType, OpportunityStatus status, SalesRep salesRep) {
         this.id = id;
         System.out.println(this.id);
         this.decisionMaker = decisionMaker;
         this.quantity = quantity;
         this.productType = productType;
         this.status = status;
+        this.salesRep = salesRep;
     }
 
-    public static Opportunity create(Contact decisionMaker, int quantity, ProductType productType) {
-        return new Opportunity(UUID.randomUUID(), decisionMaker, quantity, productType, OpportunityStatus.OPEN);
+    public static Opportunity create(Contact decisionMaker, int quantity, ProductType productType, SalesRep salesRep) {
+        return new Opportunity(UUID.randomUUID(), decisionMaker, quantity, productType, OpportunityStatus.OPEN, salesRep);
     }
 
     public void closeLost() {

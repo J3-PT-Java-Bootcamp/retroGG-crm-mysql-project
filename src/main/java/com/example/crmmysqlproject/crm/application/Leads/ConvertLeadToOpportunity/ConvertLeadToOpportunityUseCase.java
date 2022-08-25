@@ -11,6 +11,8 @@ import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public final class ConvertLeadToOpportunityUseCase {
 
@@ -25,28 +27,25 @@ public final class ConvertLeadToOpportunityUseCase {
     private ContactRepository contactRepository;
 
     public void run(ConvertLeadToOpportunityRequest request) throws LeadNotFoundException {
-        var lead = this.leadRepository.findById(request.leadId());
-        if (lead.isEmpty()) {
-            throw new LeadNotFoundException(request.leadId());
-        }
+        var lead = this.leadRepository.findById(request.leadId()).orElseThrow(() -> new LeadNotFoundException(request.leadId()));
         var account = Account.create(
-                lead.get().getCompanyName(),
+                lead.getCompanyName(),
                 request.companyIndustry(),
                 request.numberOfEmployees(),
                 request.companyCity(),
                 request.companyCountry()
         );
         var storedAccount = this.accountRepository.save(account);
-        var decisionMaker = Contact.fromLead(lead.get());
+        var decisionMaker = Contact.fromLead(lead);
         decisionMaker.setAccount(storedAccount);
         var storedContact = this.contactRepository.save(decisionMaker);
         var opportunity = Opportunity.create(
                 storedContact,
                 request.quantity(),
-                request.productType());
+                request.productType(),
+                lead.getSalesRep());
         this.opportunityRepository.save(opportunity);
-
-        this.leadRepository.delete(lead.get());
+        this.leadRepository.delete(lead);
     }
 }
 
