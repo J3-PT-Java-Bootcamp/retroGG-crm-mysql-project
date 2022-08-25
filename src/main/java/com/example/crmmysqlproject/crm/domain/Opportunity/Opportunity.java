@@ -1,5 +1,6 @@
 package com.example.crmmysqlproject.crm.domain.Opportunity;
 
+import com.example.crmmysqlproject.crm.domain.Sales.SalesRep;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
@@ -30,6 +31,14 @@ public class Opportunity {
     @ManyToOne
     @JoinColumn(name = "decision_maker_id")
     private Contact decisionMaker;
+
+    @ManyToOne
+    @JoinColumn(name = "sales_rep_id")
+    private SalesRep salesRep;
+
+    public void setSalesRep(SalesRep salesRep) {
+        this.salesRep = salesRep;
+    }
 
     private Opportunity(UUID id, Contact decisionMaker, int quantity, ProductType productType, OpportunityStatus status) {
         this.id = id;

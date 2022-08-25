@@ -1,5 +1,6 @@
 package com.example.crmmysqlproject.crm.domain.Lead;
 
+import com.example.crmmysqlproject.crm.domain.Sales.SalesRep;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,10 @@ public class Lead {
     private String email;
     @Column
     private String companyName;
+
+    @ManyToOne
+    @JoinColumn(name = "sales_rep_id")
+    private SalesRep salesRep;
 
     public Lead(String name, String phoneNumber, String email, String companyName) {
         this.name = name;

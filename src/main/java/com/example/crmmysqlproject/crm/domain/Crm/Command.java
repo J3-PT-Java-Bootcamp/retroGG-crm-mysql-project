@@ -7,6 +7,8 @@ public enum Command {
     OPPORTUNITY_LOOKUP("lookup opportunity"),
     CLOSE_LOST("close-lost"),
     CLOSE_WON("close-won"),
+    NEW_SALES_REP("new salesrep"),
+    SHOW_SALES_REP("show salesrep"),
     HELP("--help"),
     EXIT("exit"),
     INVALID("invalid"),

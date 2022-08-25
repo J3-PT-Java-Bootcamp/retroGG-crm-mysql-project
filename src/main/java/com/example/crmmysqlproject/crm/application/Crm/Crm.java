@@ -8,15 +8,14 @@ import com.example.crmmysqlproject.crm.application.Leads.FindAll.FindAllLeads;
 import com.example.crmmysqlproject.crm.application.Opportunity.CloseLostOpportunity.CloseLostOpportunity;
 import com.example.crmmysqlproject.crm.application.Opportunity.CloseWonOpportunity.CloseWonOpportunity;
 import com.example.crmmysqlproject.crm.application.Opportunity.FindOpportunity.FindOpportunity;
+import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRep;
+import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRepRequest;
 import com.example.crmmysqlproject.crm.application.Shared.UUIDRequest;
-import com.example.crmmysqlproject.crm.domain.Account.AccountRepository;
 import com.example.crmmysqlproject.crm.domain.Account.Industry;
 import com.example.crmmysqlproject.crm.domain.Account.IndustryNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Crm.Command;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadNotFoundException;
-import com.example.crmmysqlproject.crm.domain.Lead.LeadRepository;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundException;
-import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductType;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductTypeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +46,7 @@ public final class Crm {
     private CloseWonOpportunity closeWonOpportunity;
 
     @Autowired
-    private OpportunityRepository opportunityRepository;
-
-    @Autowired
-    private LeadRepository leadsRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private CreateSalesRep createSalesRep;
 
     public void start() {
         this.printWelcome();
@@ -70,12 +63,29 @@ public final class Crm {
                 case OPPORTUNITY_LOOKUP -> this.showOpportunity();
                 case CLOSE_LOST -> this.closeLostOpportunity();
                 case CLOSE_WON -> this.closeWonOpportunity();
+                case NEW_SALES_REP -> this.createSalesRep();
+                case SHOW_SALES_REP -> this.showSalesReps();
                 case HELP -> this.printHelp();
                 case EXIT -> exit = true;
                 default -> System.out.println("Unavailable command.");
             }
         } while (!exit);
         this.printQuit();
+    }
+
+    private void showSalesReps() {
+    }
+
+    private void createSalesRep() {
+        System.out.println("SalesRep creation wizard");
+        System.out.println("========================");
+
+        System.out.println("Name: ");
+        String name = scanner.nextLine();
+
+        var request = new CreateSalesRepRequest(name);
+        this.createSalesRep.run(request);
+        System.out.println("SalesRep created successfully!");
     }
 
     private void printCommandRequest() {
@@ -102,6 +112,8 @@ public final class Crm {
                 \tlookup opportunity \t-\tShow opportunity if found.
                 \tclose-lost \t-\tClose lost opportunity.
                 \tclose-won \t-\tClose won opportunity.
+                \tnew salesrep\t-\tCreate new sales rep.
+                \tshow salesrep\t-\tShow sales rep.
                 """);
     }
 
