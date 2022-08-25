@@ -1,36 +1,46 @@
 package com.example.crmmysqlproject.crm.domain.Account;
 
 import com.example.crmmysqlproject.crm.domain.Opportunity.Contact;
-import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
-
+@Table(name = "accounts")
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Type(type = "uuid-char")
     private UUID id;
-    private String name;
-    private Industry industry;
-    private int employeeCount;
-    private String city;
-    private String country;
-    private ArrayList<Contact> contacts;
-    private ArrayList<Opportunity> opportunities;
 
-    private Account(UUID id, String name, Industry industry, int employeeCount, String city, String country, ArrayList<Contact> contacts, ArrayList<Opportunity> oportunities) {
+    @Column
+    private String name;
+
+    @Column
+    private Industry industry;
+
+    @Column
+    private int employeeCount;
+
+    @Column
+    private String city;
+
+    @Column
+    private String country;
+
+    @OneToMany(mappedBy = "account")
+    private List<Contact> contacts;
+
+
+    private Account(UUID id, String name, Industry industry, int employeeCount, String city, String country, List<Contact> contacts) {
         this.id = id;
         this.name = name;
         this.industry = industry;
@@ -38,38 +48,10 @@ public class Account {
         this.city = city;
         this.country = country;
         this.contacts = contacts;
-        this.opportunities = oportunities;
     }
 
     public static Account create(String name, Industry industry, int employeeCount, String city, String country) {
-        return new Account(UUID.randomUUID(), name, industry, employeeCount, city, country, new ArrayList<Contact>(), new ArrayList<Opportunity>());
+        return new Account(UUID.randomUUID(), name, industry, employeeCount, city, country, new ArrayList<>());
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public Industry getIndustry() {
-        return industry;
-    }
-
-    public int getEmployeeCount() {
-        return employeeCount;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void addContact(Contact contact) {
-        this.contacts.add(contact);
-    }
-
-    public void addOpportunity(Opportunity opportunity) {
-        this.opportunities.add(opportunity);
-    }
 }

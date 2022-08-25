@@ -19,38 +19,41 @@ import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundExc
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductType;
 import com.example.crmmysqlproject.crm.domain.Opportunity.ProductTypeNotFoundException;
-import com.example.crmmysqlproject.crm.infrastructure.persistence.Account.InMemoryAccountRepository;
-import com.example.crmmysqlproject.crm.infrastructure.persistence.Lead.InMemoryLeadRepository;
-import com.example.crmmysqlproject.crm.infrastructure.persistence.Opportunity.InMemoryOpportunityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
 import java.util.UUID;
 
+@Component
 public final class Crm {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    private final CreateLeadUseCase createLeadUseCase;
-    private final ConvertLeadToOpportunityUseCase convertLeadToOpportunityUseCase;
-    private final FindAllLeads findAllLeads;
-    private final FindOpportunity findOpportunity;
-    private final CloseLostOpportunity closeLostOpportunity;
-    private final CloseWonOpportunity closeWonOpportunity;
+    @Autowired
+    private CreateLeadUseCase createLeadUseCase;
+    @Autowired
+    private ConvertLeadToOpportunityUseCase convertLeadToOpportunityUseCase;
+    @Autowired
+    private FindAllLeads findAllLeads;
 
-    private final OpportunityRepository opportunityRepository;
-    private final LeadRepository leadsRepository;
-    private final AccountRepository accountRepository;
-    public Crm() {
-        this.leadsRepository = new InMemoryLeadRepository();
-        this.accountRepository = new InMemoryAccountRepository();
-        this.opportunityRepository = new InMemoryOpportunityRepository();
-        this.createLeadUseCase = new CreateLeadUseCase(leadsRepository);
-        this.convertLeadToOpportunityUseCase = new ConvertLeadToOpportunityUseCase(leadsRepository, accountRepository, opportunityRepository);
-        this.findAllLeads = new FindAllLeads(leadsRepository);
-        this.findOpportunity = new FindOpportunity(opportunityRepository);
-        this.closeLostOpportunity = new CloseLostOpportunity(opportunityRepository, findOpportunity);
-        this.closeWonOpportunity = new CloseWonOpportunity(opportunityRepository, findOpportunity);
-    }
+    @Autowired
+    private FindOpportunity findOpportunity;
+
+    @Autowired
+    private CloseLostOpportunity closeLostOpportunity;
+
+    @Autowired
+    private CloseWonOpportunity closeWonOpportunity;
+
+    @Autowired
+    private OpportunityRepository opportunityRepository;
+
+    @Autowired
+    private LeadRepository leadsRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     public void start() {
         this.printWelcome();
@@ -199,10 +202,8 @@ public final class Crm {
         System.out.print("ID: ");
         String idInput = scanner.nextLine();
         UUID id = UUID.fromString(idInput);
-        System.out.print("Closing opportunity as LOST, please add a note: ");
-        String note = scanner.nextLine();
         try {
-            this.closeLostOpportunity.run(new UUIDRequest(id, note));
+            this.closeLostOpportunity.run(new UUIDRequest(id));
             System.out.printf("Opportunity with id: %s closed lost successfully.%n", id);
         } catch (OpportunityNotFoundException e) {
             System.out.println(e.getMessage());
@@ -213,29 +214,12 @@ public final class Crm {
         System.out.print("ID: ");
         String idInput = scanner.nextLine();
         UUID id = UUID.fromString(idInput);
-        System.out.print("Closing opportunity as WON, please add a note: ");
-        String note = scanner.nextLine();
         try {
-            this.closeWonOpportunity.run(new UUIDRequest(id, note));
+            this.closeWonOpportunity.run(new UUIDRequest(id));
             System.out.printf("Opportunity with id: %s closed won successfully.%n", id);
         } catch (OpportunityNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public ConvertLeadToOpportunityUseCase getConvertLeadToOpportunityUseCase() {
-        return convertLeadToOpportunityUseCase;
-    }
-
-    public CreateLeadUseCase getCreateLeadUseCase() {
-        return createLeadUseCase;
-    }
-
-    public OpportunityRepository getOpportunityRepository() {
-        return opportunityRepository;
-    }
-
-    public LeadRepository getLeadsRepository() {
-        return leadsRepository;
-    }
 }

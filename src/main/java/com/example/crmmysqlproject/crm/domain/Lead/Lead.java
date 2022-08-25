@@ -1,42 +1,37 @@
 package com.example.crmmysqlproject.crm.domain.Lead;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "leads")
 public class Lead {
 
-    private static int NEXT_ID = 1;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private int id;
-    private final String name;
-    private final String phoneNumber;
-    private final String email;
-    private final String companyName;
+    @Column
+    private String name;
+
+    @Column
+    private String phoneNumber;
+    @Column
+    private String email;
+    @Column
+    private String companyName;
 
     public Lead(String name, String phoneNumber, String email, String companyName) {
-        this.id = NEXT_ID;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.companyName = companyName;
-        NEXT_ID++;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getCompanyName() {
-        return companyName;
     }
 
     @Override

@@ -4,30 +4,31 @@ import com.example.crmmysqlproject.crm.domain.Account.Account;
 import com.example.crmmysqlproject.crm.domain.Account.AccountRepository;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadRepository;
+import com.example.crmmysqlproject.crm.domain.Opportunity.Contact;
+import com.example.crmmysqlproject.crm.domain.Opportunity.ContactRepository;
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public final class ConvertLeadToOpportunityUseCase {
 
-    private final LeadRepository leadRepository;
-    private final AccountRepository accountRepository;
-    private final OpportunityRepository opportunityRepository;
+    @Autowired
+    private LeadRepository leadRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private OpportunityRepository opportunityRepository;
 
-    public ConvertLeadToOpportunityUseCase(LeadRepository leadRepository, AccountRepository accountRepository, OpportunityRepository opportunityRepository) {
-        this.leadRepository = leadRepository;
-        this.accountRepository = accountRepository;
-        this.opportunityRepository = opportunityRepository;
-    }
+    @Autowired
+    private ContactRepository contactRepository;
 
     public void run(ConvertLeadToOpportunityRequest request) throws LeadNotFoundException {
         var lead = this.leadRepository.findById(request.leadId());
         if (lead.isEmpty()) {
             throw new LeadNotFoundException(request.leadId());
         }
-        var opportunity = Opportunity.createFromLead(
-                lead.get(),
-                request.quantity(),
-                request.productType());
         var account = Account.create(
                 lead.get().getCompanyName(),
                 request.companyIndustry(),
@@ -35,11 +36,17 @@ public final class ConvertLeadToOpportunityUseCase {
                 request.companyCity(),
                 request.companyCountry()
         );
-        account.addContact(opportunity.getDecisionMaker());
-        account.addOpportunity(opportunity);
-        this.accountRepository.save(account);
+        var storedAccount = this.accountRepository.save(account);
+        var decisionMaker = Contact.fromLead(lead.get());
+        decisionMaker.setAccount(storedAccount);
+        var storedContact = this.contactRepository.save(decisionMaker);
+        var opportunity = Opportunity.create(
+                storedContact,
+                request.quantity(),
+                request.productType());
         this.opportunityRepository.save(opportunity);
-        this.leadRepository.remove(lead.get());
+
+        this.leadRepository.delete(lead.get());
     }
 }
 

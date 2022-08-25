@@ -1,13 +1,6 @@
 package com.example.crmmysqlproject.crm.domain.Lead;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LeadRepository {
-
-    void save(Lead lead);
-    void remove(Lead lead);
-
-    Optional<Lead> findById(Integer id);
-    ArrayList<Lead> findAll();
+public interface LeadRepository extends JpaRepository<Lead, Integer> {
 }

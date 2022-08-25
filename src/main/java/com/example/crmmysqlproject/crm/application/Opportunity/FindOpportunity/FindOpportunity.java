@@ -3,15 +3,16 @@ package com.example.crmmysqlproject.crm.application.Opportunity.FindOpportunity;
 import com.example.crmmysqlproject.crm.domain.Opportunity.Opportunity;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public final class FindOpportunity {
-    private final OpportunityRepository opportunityRepository;
 
-    public FindOpportunity(OpportunityRepository opportunityRepository) {
-        this.opportunityRepository = opportunityRepository;
-    }
+    @Autowired
+    private OpportunityRepository opportunityRepository;
 
     public Opportunity run(UUID id) throws OpportunityNotFoundException {
         var opportunity = this.opportunityRepository.findById(id);

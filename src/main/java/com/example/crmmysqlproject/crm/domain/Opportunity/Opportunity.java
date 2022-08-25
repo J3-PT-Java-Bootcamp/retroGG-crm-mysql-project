@@ -1,23 +1,35 @@
 package com.example.crmmysqlproject.crm.domain.Opportunity;
 
-import com.example.crmmysqlproject.crm.domain.Lead.Lead;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.UUID;
 
+@Entity
+@Getter
+@NoArgsConstructor
+@Table(name = "opportunities")
 public class Opportunity {
+    @Id
+    @Type(type = "uuid-char")
     private UUID id;
-    private Contact decisionMaker;
+
+    @Column
     private int quantity;
+
+    @Column
+    @Enumerated(EnumType.STRING)
     private ProductType productType;
+
+    @Column
+    @Enumerated(EnumType.STRING)
     private OpportunityStatus status;
 
-    private ArrayList<String> notes;
-    private String note;
-
-    private Opportunity() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "decision_maker_id")
+    private Contact decisionMaker;
 
     private Opportunity(UUID id, Contact decisionMaker, int quantity, ProductType productType, OpportunityStatus status) {
         this.id = id;
@@ -26,32 +38,10 @@ public class Opportunity {
         this.quantity = quantity;
         this.productType = productType;
         this.status = status;
-        this.notes = new ArrayList<String>();
     }
 
-    public static Opportunity createFromLead(Lead lead, int quantity, ProductType productType) {
-        var decisionMaker = Contact.fromLead(lead);
+    public static Opportunity create(Contact decisionMaker, int quantity, ProductType productType) {
         return new Opportunity(UUID.randomUUID(), decisionMaker, quantity, productType, OpportunityStatus.OPEN);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public Contact getDecisionMaker() {
-        return decisionMaker;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public ProductType getProductType() {
-        return productType;
-    }
-
-    public OpportunityStatus getStatus() {
-        return status;
     }
 
     public void closeLost() {
@@ -62,10 +52,6 @@ public class Opportunity {
         this.status = OpportunityStatus.CLOSED_WON;
     }
 
-    public void addNote(String note) {
-        this.note = note;
-        this.notes.add(LocalDateTime.now().toString().substring(0,19)+ "   " + note+",");
-    }
     @Override
     public String toString() {
         return "OPPORTUNITY{" +
@@ -74,7 +60,7 @@ public class Opportunity {
                 ", quantity=" + quantity +
                 ", productType=" + productType +
                 ", status=" + status +
-                '}' + "NOTES: " + notes;
+                '}';
     }
 
 
