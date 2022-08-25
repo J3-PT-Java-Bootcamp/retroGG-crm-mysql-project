@@ -11,6 +11,8 @@ import com.example.crmmysqlproject.crm.application.Opportunity.FindOpportunity.F
 import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRep;
 import com.example.crmmysqlproject.crm.application.SalesRep.Create.CreateSalesRepRequest;
 import com.example.crmmysqlproject.crm.application.SalesRep.FindAll.FindAllSalesRep;
+import com.example.crmmysqlproject.crm.application.SalesRep.reporting.ReportService;
+import com.example.crmmysqlproject.crm.application.SalesRep.reporting.reports.LeadsBySalesRep;
 import com.example.crmmysqlproject.crm.application.Shared.UUIDRequest;
 import com.example.crmmysqlproject.crm.domain.Account.Industry;
 import com.example.crmmysqlproject.crm.domain.Account.IndustryNotFoundException;
@@ -23,6 +25,7 @@ import com.example.crmmysqlproject.crm.domain.Sales.SalesRepNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -53,6 +56,9 @@ public final class Crm {
     @Autowired
     private FindAllSalesRep findAllSalesRep;
 
+    @Autowired
+    private ReportService reportService;
+
     public void start() {
         this.printWelcome();
         String inputCommand;
@@ -70,12 +76,45 @@ public final class Crm {
                 case CLOSE_WON -> this.closeWonOpportunity();
                 case NEW_SALES_REP -> this.createSalesRep();
                 case SHOW_SALES_REP -> this.showSalesReps();
+                case LEAD_BY_SALES_REP -> this.leadBySalesRep();
+                case OPPORTUNITY_BY_SALES_REP -> this.opportunityBySalesRep();
+                case CLOSED_WON_BY_SALES_REP -> this.closedWonBySalesRep();
+                case CLOSED_LOST_BY_SALES_REP -> this.closedLostBySalesRep();
+                case OPEN_BY_SALES_REP -> this.openBySalesRep();
                 case HELP -> this.printHelp();
                 case EXIT -> exit = true;
                 default -> System.out.println("Unavailable command.");
             }
         } while (!exit);
         this.printQuit();
+    }
+
+    private void openBySalesRep() {
+        printBySalesRep(this.reportService.openOpportunitiesBySalesRep());
+    }
+
+    private void closedLostBySalesRep() {
+        printBySalesRep(this.reportService.closedLostOpportunitiesBySalesRep());
+    }
+
+    private void closedWonBySalesRep() {
+        printBySalesRep(this.reportService.closedWonOpportunitiesBySalesRep());
+    }
+
+    private void opportunityBySalesRep() {
+        printBySalesRep(this.reportService.opportunitiesBySalesRep());
+    }
+
+    private void printBySalesRep(List<Object[]> objects) {
+        for (var object: objects) {
+            System.out.printf("%s - %d %n", object[0], object[1]);
+        }
+    }
+    private void leadBySalesRep() {
+        var leadsBySales = this.reportService.listLeadsBySalesRep();
+        for (var lead: leadsBySales) {
+            System.out.printf("%s - %d %n", lead[0], lead[1]);
+        }
     }
 
     private void showSalesReps() {
@@ -124,6 +163,50 @@ public final class Crm {
                 \tclose-won \t-\tClose won opportunity.
                 \tnew salesrep\t-\tCreate new sales rep.
                 \tshow salesrep\t-\tShow sales rep.
+                                
+                \tReports by SalesRep.
+                \t\tA count of Leads by SalesRep can be displayed by typing “Report Lead by SalesRep”
+                \t\tA count of all Opportunities by SalesRep can be displayed by typing “Report Opportunity by SalesRep”
+                \t\tA count of all CLOSED_WON Opportunities by SalesRep can be displayed by typing “Report CLOSED-WON by SalesRep”
+                \t\tA count of all CLOSED_LOST Opportunities by SalesRep can be displayed by typing “Report CLOSED-LOST by SalesRep”
+                \t\tA count of all OPEN Opportunities by SalesRep can be displayed by typing “Report OPEN by SalesRep”
+
+                \tReports by Opportunity Product.
+                \t\tA count of all Opportunities by the product can be displayed by typing “Report Opportunity by product”
+                \t\tA count of all CLOSED_WON Opportunities by the product can be displayed by typing “Report CLOSED-WON by product”
+                \t\tA count of all CLOSED_LOST Opportunities by the product can be displayed by typing “Report CLOSED-LOST by product”
+                \t\tA count of all OPEN Opportunities by the product can be displayed by typing “Report OPEN by product”
+                                
+                \tReports by Opportunity Country.
+                \t\tA count of all Opportunities by country can be displayed by typing “Report Opportunity by Country”
+                \t\tA count of all CLOSED_WON Opportunities by country can be displayed by typing “Report CLOSED-WON by Country”
+                \t\tA count of all CLOSED_LOST Opportunities by country can be displayed by typing “Report CLOSED-LOST by Country”
+                \t\tA count of all OPEN Opportunities by country can be displayed by typing “Report OPEN by Country”
+                                
+                \tReports by Opportunity City.
+                \t\tA count of all Opportunities by the city can be displayed by typing “Report Opportunity by City”
+                \t\tA count of all CLOSED_WON Opportunities by the city can be displayed by typing “Report CLOSED-WON by City”
+                \t\tA count of all CLOSED_LOST Opportunities by the city can be displayed by typing “Report CLOSED-LOST by City”
+                \t\tA count of all OPEN Opportunities by the city can be displayed by typing “Report OPEN by City”
+                                
+                \tReports by Opportunity Industry.
+                \t\tA count of all Opportunities by industry can be displayed by typing “Report Opportunity by Industry”
+                \t\tA count of all CLOSED_WON Opportunities by industry can be displayed by typing “Report CLOSED-WON by Industry”
+                \t\tA count of all CLOSED_LOST Opportunities by industry can be displayed by typing “Report CLOSED-LOST by Industry”
+                \t\tA count of all OPEN Opportunities by industry can be displayed by typing “Report OPEN by Industry”
+                                
+                \tReports by Opportunity States.
+                \t\tThe mean number of Opportunities associated with an Account can be displayed by typing “Mean Opps per Account”
+                \t\tThe median number of Opportunities associated with an Account can be displayed by typing “Median Opps per Account”
+                \t\tThe maximum number of Opportunities associated with an Account can be displayed by typing “Max Opps per Account”
+                \t\tThe minimum number of Opportunities associated with an Account can be displayed by typing “Min Opps per Account”
+                
+                \tReports by Product Quantity.
+                \t\tThe mean quantity of products order can be displayed by typing “Mean Quantity”
+                \t\tThe median quantity of products order can be displayed by typing “Median Quantity”
+                \t\tThe maximum quantity of products order can be displayed by typing “Max Quantity”
+                \t\tThe minimum quantity of products order can be displayed by typing “Min Quantity”
+
                 """);
     }
 
