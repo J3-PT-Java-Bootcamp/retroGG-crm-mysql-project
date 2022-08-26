@@ -22,4 +22,7 @@ public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> 
     List<Opportunity> findAllByProduct(ProductType productType);
 
     List<Opportunity> findAllByProductAndStatus(ProductType productType, OpportunityStatus status);
+
+    List<Opportunity> findAllByStatus(String status);
+
 }

@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
     @Service
     public class ReportService {
 
-        @Autowired
-        private OpportunityRepository opportunityRepository;
+        private final OpportunityRepository opportunityRepository;
+
+        public ReportService(OpportunityRepository opportunityRepository) {
+            this.opportunityRepository = opportunityRepository;
+        }
 
         public Integer getCountByProduct(ProductType productType) {
             return opportunityRepository.findAllByProduct(productType).size();
@@ -20,4 +23,4 @@ import org.springframework.stereotype.Service;
             return opportunityRepository.findAllByProductAndStatus(productType, status).size();
         }
     }
-}
+
