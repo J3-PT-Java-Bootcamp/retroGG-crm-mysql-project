@@ -1,5 +1,6 @@
 package com.example.crmmysqlproject.crm.application.Crm;
 
+import com.example.crmmysqlproject.crm.application.Account.FindAccount;
 import com.example.crmmysqlproject.crm.application.Leads.ConvertLeadToOpportunity.ConvertLeadToOpportunityRequest;
 import com.example.crmmysqlproject.crm.application.Leads.ConvertLeadToOpportunity.ConvertLeadToOpportunityUseCase;
 import com.example.crmmysqlproject.crm.application.Leads.CreateLead.CreateLeadRequest;
@@ -14,13 +15,13 @@ import com.example.crmmysqlproject.crm.application.SalesRep.FindAll.FindAllSales
 import com.example.crmmysqlproject.crm.application.SalesRep.reporting.ReportService;
 import com.example.crmmysqlproject.crm.application.SalesRep.reporting.reports.LeadsBySalesRep;
 import com.example.crmmysqlproject.crm.application.Shared.UUIDRequest;
+import com.example.crmmysqlproject.crm.domain.Account.Account;
+import com.example.crmmysqlproject.crm.domain.Account.AccountNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Account.Industry;
 import com.example.crmmysqlproject.crm.domain.Account.IndustryNotFoundException;
 import com.example.crmmysqlproject.crm.domain.Crm.Command;
 import com.example.crmmysqlproject.crm.domain.Lead.LeadNotFoundException;
-import com.example.crmmysqlproject.crm.domain.Opportunity.OpportunityNotFoundException;
-import com.example.crmmysqlproject.crm.domain.Opportunity.ProductType;
-import com.example.crmmysqlproject.crm.domain.Opportunity.ProductTypeNotFoundException;
+import com.example.crmmysqlproject.crm.domain.Opportunity.*;
 import com.example.crmmysqlproject.crm.domain.Sales.SalesRepNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,9 @@ public final class Crm {
 
     @Autowired
     private FindOpportunity findOpportunity;
+
+    @Autowired
+    private FindAccount findAccount;
 
     @Autowired
     private CloseLostOpportunity closeLostOpportunity;
@@ -227,7 +231,7 @@ public final class Crm {
         String company = scanner.nextLine();
 
         System.out.println("SalesRep ID: ");
-        Integer salesRepId = scanner.nextInt();
+        Integer salesRepId = Integer.parseInt(scanner.nextLine());
         var request = new CreateLeadRequest(name, phone, email, company, salesRepId);
         try {
             this.createLeadUseCase.run(request);
@@ -259,36 +263,56 @@ public final class Crm {
         System.out.println("Which quantity?");
         int quantity = Integer.parseInt(scanner.nextLine());
 
+        System.out.println("Existing account? (yes or no)");
+        String accountResponse = scanner.nextLine();
+
         Industry industry = null;
-        do {
-            try {
-                System.out.println("Industry?");
-                for (Industry type : Industry.values()) {
-                    System.out.printf("\t%s%n", type);
+        int numberOfEmployees = 0;
+        String city = "";
+        String country = "";
+        List<Contact> contacts;
+
+        //industry, numberOfEmployees, city, country
+
+        if (accountResponse.equals("yes")) {
+            Account foundAccount = getAccount();
+            UUID foundAccountId = foundAccount.getId();
+            industry = foundAccount.getIndustry();
+            numberOfEmployees = foundAccount.getEmployeeCount();
+            city = foundAccount.getCity();
+            country = foundAccount.getCountry();
+        } else {
+            do {
+                try {
+                    System.out.println("Industry?");
+                    for (Industry type : Industry.values()) {
+                        System.out.printf("\t%s%n", type);
+                    }
+                    String industryInput = scanner.nextLine();
+                    industry = Industry.fromString(industryInput);
+                } catch (IndustryNotFoundException e) {
+                    System.out.println(e.getMessage());
                 }
-                String industryInput = scanner.nextLine();
-                industry = Industry.fromString(industryInput);
-            } catch (IndustryNotFoundException e) {
+            } while (industry == null);
+
+            System.out.println("Number of employees?");
+            numberOfEmployees = Integer.parseInt(scanner.nextLine());
+
+            System.out.println("City?");
+            city = scanner.nextLine();
+            System.out.println("Country?");
+            country = scanner.nextLine();
+        }
+
+
+            var request = new ConvertLeadToOpportunityRequest(leadId, productType, quantity, industry, numberOfEmployees, city, country);
+            try {
+                this.convertLeadToOpportunityUseCase.run(request);
+                System.out.println("Lead converted successfully.");
+            } catch (LeadNotFoundException e) {
                 System.out.println(e.getMessage());
             }
-        } while (industry == null);
-
-        System.out.println("Number of employees?");
-        int numberOfEmployees = Integer.parseInt(scanner.nextLine());
-
-        System.out.println("City?");
-        String city = scanner.nextLine();
-        System.out.println("Country?");
-        String country = scanner.nextLine();
-
-        var request = new ConvertLeadToOpportunityRequest(leadId, productType, quantity, industry, numberOfEmployees, city, country);
-        try {
-            this.convertLeadToOpportunityUseCase.run(request);
-            System.out.println("Lead converted successfully.");
-        } catch (LeadNotFoundException e) {
-            System.out.println(e.getMessage());
         }
-    }
 
     private void showLeads() {
         var leads = this.findAllLeads.run();
@@ -308,6 +332,19 @@ public final class Crm {
         } catch (OpportunityNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private Account getAccount(){
+        System.out.println("Account ID?");
+        String accountId = scanner.nextLine();
+        UUID id = UUID.fromString(accountId);
+        Account account = null;
+        try {
+            account = this.findAccount.run(id);
+        } catch (AccountNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return account;
     }
 
     private void closeLostOpportunity() {
