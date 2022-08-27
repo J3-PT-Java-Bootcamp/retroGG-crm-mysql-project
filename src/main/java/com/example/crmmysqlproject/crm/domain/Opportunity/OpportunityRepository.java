@@ -14,7 +14,7 @@ public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> 
     @Query("SELECT s.name, size(s.opportunities) FROM Opportunity o INNER JOIN SalesRep s ON o.salesRep.id = s.id GROUP BY s.id")
     List<Object[]> opportunitiesBySalesRep();
 
-    @Query("SELECT s.name, size(s.opportunities) FROM Opportunity o INNER JOIN SalesRep s ON o.salesRep.id = s.id WHERE o.status = :status GROUP BY s.id")
+    @Query("SELECT s.name, count(o.id) FROM Opportunity o INNER JOIN SalesRep s ON o.salesRep.id = s.id WHERE o.status = :status GROUP BY s.id")
     List<Object[]> opportunitiesBySalesRep(@Param("status") OpportunityStatus status);
 
 }
